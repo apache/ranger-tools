@@ -20,6 +20,9 @@ name: push
 
 on:
   push:
+    paths:
+      - 'docker/**'
+      - '.github/workflows/push.yaml'
 
 permissions:
   contents: read
