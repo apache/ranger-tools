@@ -17,7 +17,7 @@
 
 # Apache Ranger Base Image
 
-[ranger-tools/docker](https://github.com/apache/ranger-tools/docker) contains utilities for ranger docker base image development, base images are the underlying images used to run and test Apache Ranger in Docker containers.
+This directory contains utilities for ranger docker base image development, base images are the underlying images used to run and test Apache Ranger in Docker containers.
 
 Images come in multiple flavors: `jdk8` and `jdk11` and `jdk17` and for multiple arch: `linux/arm64` and `linux/amd64`.
 
