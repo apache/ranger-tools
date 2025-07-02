@@ -15,7 +15,7 @@
   limitations under the License.
 -->
 
-# Apache Ranger Tools
+# Apache Ranger Base Image
 
 [ranger-tools/docker](https://github.com/apache/ranger-tools/docker) contains utilities for ranger docker base image development, base images are the underlying images used to run and test Apache Ranger in Docker containers.
 
