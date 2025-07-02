@@ -22,6 +22,8 @@ on:
   push:
     paths:
       - 'docker/**'
+      - '.github/workflows/build.yaml'
+      - '.github/workflows/build-and-tag.yaml'
       - '.github/workflows/push.yaml'
 
 permissions:
