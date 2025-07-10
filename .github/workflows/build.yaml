@@ -24,7 +24,7 @@ on:
       java-version:
         type: string
         description: "JDK version (default: 8)"
-        default: '8'
+        default: '1.8.0'
         required: false
     outputs:
       image-id:
