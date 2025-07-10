@@ -48,6 +48,7 @@ RUN microdnf install -y \
         openssh-clients \
         openssh-server \
         wget \
+    &&  ln -s /usr/bin/python3 /usr/bin/python \
     &&  microdnf clean all
 
 # Install Python modules
