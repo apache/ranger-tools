@@ -14,29 +14,44 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# see https://hub.docker.com/_/eclipse-temurin/tags
-ARG RANGER_BASE_JAVA_VERSION=8
+# see https://hub.docker.com/r/redhat/ubi9-minimal/tags
+ARG UBI_VERSION=latest
+FROM redhat/ubi9-minimal:${UBI_VERSION}
 
-# Ubuntu 22.04 LTS
-FROM eclipse-temurin:${RANGER_BASE_JAVA_VERSION}-jdk-jammy
+ARG RANGER_BASE_JAVA_VERSION=1.8.0
+RUN microdnf --setopt=install_weak_deps=0 --setopt=tsflags=nodocs \
+    install -y java-${RANGER_BASE_JAVA_VERSION}-openjdk-devel \
+    && microdnf clean all \
+    && rpm -q java-${RANGER_BASE_JAVA_VERSION}-openjdk-devel
 
+ENV JAVA_HOME="/usr/lib/jvm/java-${RANGER_BASE_JAVA_VERSION}" \
+    JAVA_VENDOR="openjdk" \
+    JAVA_VERSION="${RANGER_BASE_JAVA_VERSION}" \
+    JBOSS_CONTAINER_OPENJDK_JDK_MODULE="/opt/jboss/container/openjdk/jdk"
+
+COPY ./requirements.txt /tmp
 # Install packages
-RUN apt update -q \
-    && DEBIAN_FRONTEND="noninteractive" apt install -y --no-install-recommends \
-        bc \
-        iputils-ping \
-        pdsh \
+RUN microdnf install -y \
         python3 \
         python3-pip \
-        python-is-python3 \
-        ssh \
-        tzdata \
+        bc \
+        iputils \
+        hostname \
+        tar \
+        gzip \
+        procps \
         vim \
-        xmlstarlet \
-    && apt clean
+        shadow-utils \
+        util-linux-user \
+        sudo \
+        initscripts \
+        openssh-clients \
+        openssh-server \
+        wget \
+    &&  microdnf clean all
 
 # Install Python modules
-RUN pip install apache-ranger requests \
+RUN pip install --no-cache-dir -r /tmp/requirements.txt apache-ranger requests \
     && rm -rf ~/.cache/pip
 
 # Set environment variables
@@ -44,6 +59,8 @@ ENV RANGER_DIST=/home/ranger/dist
 ENV RANGER_SCRIPTS=/home/ranger/scripts
 ENV RANGER_HOME=/opt/ranger
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+RUN sed -i 's/^HOME_MODE.*/HOME_MODE 0755/' /etc/login.defs
 
 # setup groups, users, directories
 RUN groupadd ranger \

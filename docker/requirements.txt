@@ -1,0 +1,2 @@
+apache-ranger == 0.0.12
+requests == 2.32.4
