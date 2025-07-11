@@ -24,6 +24,7 @@ FROM eclipse-temurin:${RANGER_BASE_JAVA_VERSION}-jdk-jammy
 RUN apt update -q \
     && DEBIAN_FRONTEND="noninteractive" apt install -y --no-install-recommends \
         bc \
+        curl \
         iputils-ping \
         pdsh \
         python3 \
