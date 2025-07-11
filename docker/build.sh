@@ -21,4 +21,4 @@ set -u -o pipefail
 docker build \
   --build-arg RANGER_BASE_JAVA_VERSION \
   -t apache/ranger-base:dev \
-  "$@" - < Dockerfile
+  "$@" .
