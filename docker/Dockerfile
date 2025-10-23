@@ -34,6 +34,7 @@ RUN apt update -q \
         tzdata \
         vim \
         xmlstarlet \
+        krb5-user \
     && apt clean
 
 # Install Python modules
