@@ -53,7 +53,9 @@ RUN mkdir -p /home/ranger/dist /home/ranger/scripts /opt/ranger && \
     chmod +rx /home/ranger /home/ranger/dist /home/ranger/scripts
 
 # setup groups, users, directories
-COPY create_users_and_groups.sh /${RANGER_SCRIPTS}/create_users_and_groups.sh
-RUN chmod +x /${RANGER_SCRIPTS}/create_users_and_groups.sh && /${RANGER_SCRIPTS}/create_users_and_groups.sh && rm /${RANGER_SCRIPTS}/create_users_and_groups.sh
+COPY create_users_and_groups.sh ${RANGER_SCRIPTS}/create_users_and_groups.sh
+RUN chmod +x ${RANGER_SCRIPTS}/create_users_and_groups.sh && ${RANGER_SCRIPTS}/create_users_and_groups.sh && \
+    chown -R ranger:ranger /home/ranger /opt/ranger && \
+    rm ${RANGER_SCRIPTS}/create_users_and_groups.sh
 
 ENTRYPOINT [ "/bin/bash" ]

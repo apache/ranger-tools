@@ -19,7 +19,9 @@
 # Script to create users and groups in ranger containers
 # This script is designed to be run during container initialization
 
-# Function to create a group if it doesn't exist
+set -e
+
+# General-purpose function to create a group if it doesn't exist.
 create_group_if_not_exists() {
     local groupname=$1
 
@@ -32,7 +34,7 @@ create_group_if_not_exists() {
     fi
 }
 
-# Function to create a user for testing.
+# General-purpose function to create a user if it doesn't exist.
 create_user_if_not_exists() {
     local username=$1
     local home_dir=$2
@@ -51,7 +53,7 @@ create_user_if_not_exists() {
     fi
 }
 
-# Function to create users and groups
+# Function to create users and groups if not exist
 create_users_and_groups() {
     local group_name=$1
     local users=$2
@@ -65,7 +67,7 @@ create_users_and_groups() {
     done
 }
 
-# Main function to create all users and groups
+# Main function to create all users and groups if not exist
 create_all_users_and_groups() {
     echo "Starting user and group creation..."
 
