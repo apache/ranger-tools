@@ -47,15 +47,16 @@ ENV RANGER_SCRIPTS=/home/ranger/scripts
 ENV RANGER_HOME=/opt/ranger
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
-# setup directories
+# create directories and setup perms
 RUN mkdir -p /home/ranger/dist /home/ranger/scripts /opt/ranger && \
-    chown -R ranger:ranger /home/ranger /opt/ranger && \
     chmod +rx /home/ranger /home/ranger/dist /home/ranger/scripts
 
-# setup groups, users, directories
-COPY create_users_and_groups.sh ${RANGER_SCRIPTS}/create_users_and_groups.sh
-RUN chmod +x ${RANGER_SCRIPTS}/create_users_and_groups.sh && ${RANGER_SCRIPTS}/create_users_and_groups.sh && \
-    chown -R ranger:ranger /home/ranger /opt/ranger && \
-    rm ${RANGER_SCRIPTS}/create_users_and_groups.sh
+# setup groups and users
+COPY create_users_and_groups.sh ${RANGER_SCRIPTS}
+RUN chmod +x /home/ranger/scripts/create_users_and_groups.sh && \
+    ./home/ranger/scripts/create_users_and_groups.sh
+
+# change ownerships
+RUN chown -R ranger:ranger /home/ranger /opt/ranger
 
 ENTRYPOINT [ "/bin/bash" ]
