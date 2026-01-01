@@ -52,7 +52,7 @@ RUN mkdir -p /home/ranger/dist /home/ranger/scripts /opt/ranger && \
     chmod +rx /home/ranger /home/ranger/dist /home/ranger/scripts
 
 # setup groups and users
-COPY ./create_users_and_groups.sh ${RANGER_SCRIPTS}
+COPY docker/create_users_and_groups.sh ${RANGER_SCRIPTS}
 RUN chmod +x /home/ranger/scripts/create_users_and_groups.sh && \
     ./home/ranger/scripts/create_users_and_groups.sh
 
