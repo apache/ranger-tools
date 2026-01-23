@@ -56,6 +56,15 @@ COPY docker/create_users_and_groups.sh ${RANGER_SCRIPTS}
 RUN chmod +x /home/ranger/scripts/create_users_and_groups.sh && \
     ./home/ranger/scripts/create_users_and_groups.sh
 
+# Create opensearch user and group
+RUN groupadd -g 3002 opensearch && \
+    useradd -u 3002 -g opensearch -G hadoop -s /bin/bash opensearch
+
+# copy kerberos utility scripts
+COPY docker/krb/* ${RANGER_SCRIPTS}
+RUN chmod 755 ${RANGER_SCRIPTS}/wait_for_keytab.sh && \
+    chmod 755 ${RANGER_SCRIPTS}/wait_for_testusers_keytab.sh
+
 # change ownerships
 RUN chown -R ranger:ranger /home/ranger /opt/ranger
 
