@@ -48,13 +48,13 @@ ENV RANGER_HOME=/opt/ranger
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 # create directories and setup perms
-RUN mkdir -p /home/ranger/dist /home/ranger/scripts /opt/ranger && \
-    chmod +rx /home/ranger /home/ranger/dist /home/ranger/scripts
+RUN mkdir -p ${RANGER_DIST} ${RANGER_SCRIPTS} ${RANGER_HOME} && \
+    chmod +rx /home/ranger ${RANGER_DIST} ${RANGER_SCRIPTS}
 
 # setup groups and users
 COPY docker/create_users_and_groups.sh ${RANGER_SCRIPTS}
 RUN chmod +x /home/ranger/scripts/create_users_and_groups.sh && \
-    ./home/ranger/scripts/create_users_and_groups.sh
+    /home/ranger/scripts/create_users_and_groups.sh
 
 # Create opensearch user and group
 RUN groupadd -g 3002 opensearch && \
