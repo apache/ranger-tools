@@ -53,8 +53,8 @@ RUN mkdir -p ${RANGER_DIST} ${RANGER_SCRIPTS} ${RANGER_HOME} && \
 
 # setup groups and users
 COPY docker/create_users_and_groups.sh ${RANGER_SCRIPTS}
-RUN chmod +x /home/ranger/scripts/create_users_and_groups.sh && \
-    /home/ranger/scripts/create_users_and_groups.sh
+RUN chmod +x ${RANGER_SCRIPTS}/create_users_and_groups.sh && \
+    ${RANGER_SCRIPTS}/create_users_and_groups.sh
 
 # Create opensearch user and group
 RUN groupadd -g 3002 opensearch && \
