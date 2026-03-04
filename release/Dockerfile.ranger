@@ -13,39 +13,34 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-ARG RANGER_DB_TYPE=postgres
 ARG RANGER_BASE_IMAGE=apache/ranger-base
 ARG RANGER_BASE_VERSION=20260123-2-8
 
 FROM ${RANGER_BASE_IMAGE}:${RANGER_BASE_VERSION} AS ranger
 
 ARG RANGER_VERSION
-ARG RANGER_DB_TYPE
 ARG TARGETARCH
 
-# Download released Ranger Admin Tarball
 COPY ./scripts/download-ranger.sh                                ${RANGER_SCRIPTS}/
-RUN chmod +x ${RANGER_SCRIPTS}/download-ranger.sh
-RUN ${RANGER_SCRIPTS}/download-ranger.sh
-
 COPY ./scripts/ranger.sh                                         ${RANGER_SCRIPTS}/
-COPY ./scripts/ranger-admin-install-${RANGER_DB_TYPE}.properties ${RANGER_SCRIPTS}/ranger-admin-install.properties
+COPY ./scripts/ranger-admin-install-postgres.properties          ${RANGER_SCRIPTS}/ranger-admin-install.properties
 COPY ./scripts/create-ranger-services.py                         ${RANGER_SCRIPTS}/
 
-RUN    tar xvfz dist/ranger-${RANGER_VERSION}-admin.tar.gz --directory=${RANGER_HOME} \
+# Download released Ranger Admin Tarball
+WORKDIR /home/ranger
+RUN chmod +x ${RANGER_SCRIPTS}/download-ranger.sh && ${RANGER_SCRIPTS}/download-ranger.sh
+WORKDIR /
+
+RUN    tar xvfz ${RANGER_DIST}/ranger-${RANGER_VERSION}-admin.tar.gz --directory=${RANGER_HOME} \
     && ln -s ${RANGER_HOME}/ranger-${RANGER_VERSION}-admin ${RANGER_HOME}/admin \
+    && rm -rf ${RANGER_DIST}/* \
     && cp -f ${RANGER_SCRIPTS}/ranger-admin-install.properties ${RANGER_HOME}/admin/install.properties \
-    && mkdir -p /var/run/ranger \
-    && mkdir -p /var/log/ranger \
+    && mkdir -p /var/run/ranger /var/log/ranger \
     && chown -R ranger:ranger ${RANGER_HOME}/admin/ ${RANGER_SCRIPTS}/ /var/run/ranger/ /var/log/ranger/ \
     && chmod 755 ${RANGER_SCRIPTS}/ranger.sh ${RANGER_SCRIPTS}/create-ranger-services.py \
     && mkdir -p /usr/share/java/
 
-FROM ranger AS ranger_postgres
-COPY ./downloads/postgresql-42.2.16.jre7.jar      /home/ranger/dist/
-RUN mv /home/ranger/dist/postgresql-42.2.16.jre7.jar /usr/share/java/postgresql.jar
-
-FROM ranger_${RANGER_DB_TYPE}
+COPY ./downloads/postgresql-42.2.16.jre7.jar /usr/share/java/postgresql.jar
 
 USER ranger
 

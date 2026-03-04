@@ -2,7 +2,7 @@ from apache_ranger.model.ranger_service import RangerService
 from apache_ranger.client.ranger_client import RangerClient
 from json import JSONDecodeError
 
-ranger_client = RangerClient('http://ranger:6080', ('admin', 'rangerR0cks!'))
+ranger_client = RangerClient('http://ranger-admin.rangernw:6080', ('admin', 'rangerR0cks!'))
 
 
 def service_not_exists(service):
