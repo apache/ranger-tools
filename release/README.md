@@ -32,9 +32,9 @@ docker build -f Dockerfile.ranger-solr -t ranger-solr:latest .
 docker build --build-arg RANGER_VERSION=${RANGER_VERSION} -f Dockerfile.ranger -t ranger:latest .
 ```
 
-### Run Images
+### Run Containers
 
-To run the images, use the following commands:
+To run the containers, use the following commands:
 
 ```bash
 docker network create rangernw
