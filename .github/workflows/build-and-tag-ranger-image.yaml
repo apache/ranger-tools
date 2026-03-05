@@ -63,7 +63,7 @@ jobs:
         id: build
         working-directory: release
         run: |
-          export RANGER_VERSION=${{ github.event.inputs.release-version }})
+          export RANGER_VERSION=${{ github.event.inputs.release-version }}
           docker buildx build \
             --build-arg RANGER_VERSION=${RANGER_VERSION} \
             --file Dockerfile.ranger \
