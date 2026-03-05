@@ -61,8 +61,8 @@ jobs:
 
       - name: Build and push images
         id: build
-        working-directory: release
         run: |
+          cd release
           export RANGER_VERSION=${{ github.event.inputs.release-version }}
           docker buildx build \
             --build-arg RANGER_VERSION=${RANGER_VERSION} \
