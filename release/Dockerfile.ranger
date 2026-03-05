@@ -34,7 +34,7 @@ WORKDIR /
 RUN    tar xvfz ${RANGER_DIST}/ranger-${RANGER_VERSION}-admin.tar.gz --directory=${RANGER_HOME} \
     && ln -s ${RANGER_HOME}/ranger-${RANGER_VERSION}-admin ${RANGER_HOME}/admin \
     && rm -rf ${RANGER_DIST}/* \
-    && cp -f ${RANGER_SCRIPTS}/ranger-admin-install.properties ${RANGER_HOME}/admin/install.properties \
+    && cp -f ${RANGER_SCRIPTS}/ranger-admin-install.properties /tmp/install.properties \
     && mkdir -p /var/run/ranger /var/log/ranger \
     && chown -R ranger:ranger ${RANGER_HOME}/admin/ ${RANGER_SCRIPTS}/ /var/run/ranger/ /var/log/ranger/ \
     && chmod 755 ${RANGER_SCRIPTS}/ranger.sh ${RANGER_SCRIPTS}/create-ranger-services.py \

@@ -49,11 +49,13 @@ docker run -d \
   -e POSTGRES_PASSWORD=rangerR0cks! \
   -e RANGER_DB_USER=rangeradmin \
   -e RANGER_DB_PASSWORD=rangerR0cks! \
-  -e HIVE_DB_USER=hive \
-  -e HIVE_DB_PASSWORD=rangerR0cks! \
   --name ranger-db --hostname ranger-db.rangernw --network rangernw --health-cmd='su -c "pg_isready -q" postgres' --health-interval=10s --health-timeout=2s --health-retries=30 ranger-db:latest
 
-docker run -d --name ranger-admin --hostname ranger-admin.rangernw --network rangernw -p 6080:6080 ranger:latest
+docker run -d \
+  -e POSTGRES_PASSWORD=rangerR0cks! \
+  -e RANGER_DB_USER=rangeradmin \
+  -e RANGER_DB_PASSWORD=rangerR0cks! \
+  --name ranger-admin --hostname ranger-admin.rangernw --network rangernw -p 6080:6080 ranger:latest
 ```
 ### Access Ranger Admin UI
 
