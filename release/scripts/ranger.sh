@@ -26,8 +26,7 @@ fi
 
 if [ "${SETUP_RANGER}" == "true" ]
 then
-  cd /tmp || exit
-  cp install.properties ${RANGER_HOME}/admin/install.properties
+  cp ${RANGER_SCRIPTS}/ranger-admin-install.properties ${RANGER_HOME}/admin/install.properties
   {
 	  echo "db_root_password=${POSTGRES_PASSWORD}"
 	  echo "db_user=${RANGER_DB_USER}"
@@ -37,10 +36,10 @@ then
 	  echo "rangerUsersync_password=${RANGER_DB_PASSWORD}"
 	  echo "keyadmin_password=${RANGER_DB_PASSWORD}"
   } >> ${RANGER_HOME}/admin/install.properties
-  rm -f install.properties
   cd ${RANGER_HOME}/admin || exit
   if ./setup.sh;
   then
+  	rm -f ${RANGER_HOME}/admin/install.properties
     touch "${RANGER_HOME}"/.setupDone
   else
     echo "Ranger Admin Setup Script didn't complete proper execution."
