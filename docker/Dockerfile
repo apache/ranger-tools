@@ -39,7 +39,7 @@ RUN apt update -q \
 ENV RANGER_DIST=/home/ranger/dist
 ENV RANGER_SCRIPTS=/home/ranger/scripts
 ENV RANGER_HOME=/opt/ranger
-ENV PATH="${JAVA_HOME}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/venv/bin"
+ENV PATH="/opt/venv/bin:${JAVA_HOME}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
 RUN python3 -m venv /opt/venv
 RUN /opt/venv/bin/pip install apache-ranger
