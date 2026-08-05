@@ -17,35 +17,32 @@
 # see https://hub.docker.com/_/eclipse-temurin/tags
 ARG RANGER_BASE_JAVA_VERSION=8
 
-# Ubuntu 22.04 LTS
-FROM eclipse-temurin:${RANGER_BASE_JAVA_VERSION}-jdk-jammy
+# Ubuntu 26.04 LTS
+FROM eclipse-temurin:${RANGER_BASE_JAVA_VERSION}-jdk-resolute
 
-# Install packages
 RUN apt update -q \
     && DEBIAN_FRONTEND="noninteractive" apt install -y --no-install-recommends \
         bc \
         curl \
         iputils-ping \
         pdsh \
-        python3 \
-        python3-pip \
-        python-is-python3 \
         ssh \
         tzdata \
         vim \
         xmlstarlet \
         krb5-user \
-    && apt clean
-
-# Install Python modules
-RUN pip install apache-ranger requests \
-    && rm -rf ~/.cache/pip
+        python3-venv \
+    &&  apt clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Set environment variables
 ENV RANGER_DIST=/home/ranger/dist
 ENV RANGER_SCRIPTS=/home/ranger/scripts
 ENV RANGER_HOME=/opt/ranger
-ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ENV PATH="${JAVA_HOME}/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/venv/bin"
+
+RUN python3 -m venv /opt/venv
+RUN /opt/venv/bin/pip install apache-ranger
 
 # create directories and setup perms
 RUN mkdir -p ${RANGER_DIST} ${RANGER_SCRIPTS} ${RANGER_HOME} && \
