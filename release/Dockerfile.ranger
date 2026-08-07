@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ARG RANGER_BASE_IMAGE=apache/ranger-base
-ARG RANGER_BASE_VERSION=20260123-2-8
+ARG RANGER_BASE_VERSION=20260806-2-8
 
 FROM ${RANGER_BASE_IMAGE}:${RANGER_BASE_VERSION} AS ranger
 

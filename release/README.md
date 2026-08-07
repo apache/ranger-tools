@@ -26,7 +26,7 @@
 To build the images, run the following commands from the `release` directory:
 
 ```bash
-export RANGER_VERSION=2.8.0
+export RANGER_VERSION=2.9.0
 docker build -f Dockerfile.ranger-postgres -t ranger-db:latest .
 docker build -f Dockerfile.ranger-solr -t ranger-solr:latest .
 docker build --build-arg RANGER_VERSION=${RANGER_VERSION} -f Dockerfile.ranger -t ranger:latest .
