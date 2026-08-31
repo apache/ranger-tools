@@ -67,6 +67,30 @@ create_users_and_groups() {
     done
 }
 
+# General-purpose function to add a user to a supplementary group.
+add_user_to_group() {
+    local username=$1
+    local groupname=$2
+
+    if ! id "$username" &>/dev/null; then
+        echo "User $username does not exist"
+        create_users_and_groups "$username" "$username"
+    fi
+
+    if ! getent group "$groupname" &>/dev/null; then
+        echo "Group $groupname does not exist"
+        create_group_if_not_exists "$groupname"
+    fi
+
+    if id -nG "$username" | tr ' ' '\n' | grep -qx "$groupname"; then
+        echo "User $username is already a member of group $groupname"
+    else
+        echo "Adding user $username to group $groupname"
+        usermod -aG "$groupname" "$username"
+        echo "User $username added to group $groupname successfully"
+    fi
+}
+
 # Main function to create all users and groups if not exist
 create_all_users_and_groups() {
     echo "Starting user and group creation..."
@@ -82,6 +106,9 @@ create_all_users_and_groups() {
 
     # Create test users in test group
     create_users_and_groups "testgroup" "testuser1 testuser2 testuser3"
+
+    # Create group shadow and add ranger user to it
+    add_user_to_group "ranger" "shadow"
 
     echo "User and group creation completed successfully..."
 }
