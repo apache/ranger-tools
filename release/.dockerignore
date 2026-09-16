@@ -1,4 +1,4 @@
 *
 !config
-!downloads/*
-!scripts/*
+!downloads/**
+!scripts/**

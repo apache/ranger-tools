@@ -30,6 +30,7 @@ export RANGER_VERSION=2.9.0
 docker build -f Dockerfile.ranger-postgres -t ranger-db:latest .
 docker build -f Dockerfile.ranger-solr -t ranger-solr:latest .
 docker build --build-arg RANGER_VERSION=${RANGER_VERSION} -f Dockerfile.ranger -t ranger:latest .
+docker build --build-arg RANGER_VERSION=${RANGER_VERSION} -f Dockerfile.ranger-pdp -t ranger-pdp:latest .
 ```
 
 ### Run Containers
@@ -56,7 +57,17 @@ docker run -d \
   -e RANGER_DB_USER=rangeradmin \
   -e RANGER_DB_PASSWORD=rangerR0cks! \
   --name ranger-admin --hostname ranger-admin.rangernw --network rangernw -p 6080:6080 ranger:latest
+
+docker run -d \
+  -e RANGER_ADMIN_URL=http://ranger-admin.rangernw:6080 \
+  -e RANGER_ADMIN_PASSWORD=rangerR0cks! \
+  -e RANGER_PDP_DELEGATION_USERS=ranger \
+  --name ranger-pdp --hostname ranger-pdp.rangernw --network rangernw -p 6500:6500 ranger-pdp:latest
 ```
 ### Access Ranger Admin UI
 
 Once the containers are running, you can access the Ranger Admin UI by navigating to `http://localhost:6080` in your web browser. The default credentials are: `admin/rangerR0cks!`
+
+### Access Ranger PDP
+
+Ranger PDP serves authorization requests at `http://localhost:6500`. See [README-pdp.md](README-pdp.md) for usage and configuration.
