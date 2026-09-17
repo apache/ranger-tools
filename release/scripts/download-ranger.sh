@@ -20,6 +20,7 @@ set -u -o pipefail
 : ${BASE_URL:="https://www.apache.org/dyn/closer.lua?action=download&filename="}
 : ${CHECKSUM_BASE_URL:="https://downloads.apache.org/"}
 : ${RANGER_VERSION:=2.8.0}
+: ${RANGER_SERVICE:=admin}
 
 download_if_not_exists() {
   local url="$1"
@@ -50,4 +51,4 @@ mkdir -p dist
 # source
 download_and_verify "ranger/${RANGER_VERSION}/apache-ranger-${RANGER_VERSION}.tar.gz"
 # binary
-download_and_verify "ranger/${RANGER_VERSION}/services/admin/ranger-${RANGER_VERSION}-admin.tar.gz"
+download_and_verify "ranger/${RANGER_VERSION}/services/${RANGER_SERVICE}/ranger-${RANGER_VERSION}-${RANGER_SERVICE}.tar.gz"

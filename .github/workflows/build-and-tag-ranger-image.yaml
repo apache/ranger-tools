@@ -15,7 +15,7 @@
 
 name: build-and-tag-ranger-image
 
-# This workflow builds the following images: ranger, ranger-db, ranger-solr.
+# This workflow builds the following images: ranger, ranger-pdp, ranger-db, ranger-solr.
 # It also pushes the image to the GitHub Container Registry, tagging it based on the ranger version present in the release branch.
 # It pushes the images to DockerHub if an OAuth token is provided as input.
 
@@ -74,6 +74,12 @@ jobs:
             --tag ghcr.io/${{ github.repository_owner }}/ranger:${RANGER_VERSION} \
             --push .
           docker buildx build \
+            --build-arg RANGER_VERSION=${RANGER_VERSION} \
+            --file Dockerfile.ranger-pdp \
+            --platform linux/amd64,linux/arm64 \
+            --tag ghcr.io/${{ github.repository_owner }}/ranger-pdp:${RANGER_VERSION} \
+            --push .
+          docker buildx build \
             --file Dockerfile.ranger-postgres \
             --platform linux/amd64,linux/arm64 \
             --tag ghcr.io/${{ github.repository_owner }}/ranger-db:${RANGER_VERSION} \
@@ -120,6 +126,7 @@ jobs:
       - name: Pull image
         run: |
           docker pull ghcr.io/${{ github.repository_owner }}/ranger:${RANGER_VERSION}
+          docker pull ghcr.io/${{ github.repository_owner }}/ranger-pdp:${RANGER_VERSION}
           docker pull ghcr.io/${{ github.repository_owner }}/ranger-db:${RANGER_VERSION}
           docker pull ghcr.io/${{ github.repository_owner }}/ranger-solr:${RANGER_VERSION}
 
@@ -141,7 +148,7 @@ jobs:
         run: |
           set -x
           for registry in $REGISTRIES; do
-            for service in ranger ranger-db ranger-solr; do
+            for service in ranger ranger-pdp ranger-db ranger-solr; do
               opts="$(echo "$RANGER_VERSION" | sed "s@^@--tag $registry/${{ github.repository_owner }}/$service:@g" | xargs echo)"
               if [[ -n "$opts" ]]; then
                 docker buildx imagetools create $opts ghcr.io/${{ github.repository_owner }}/$service:${RANGER_VERSION}

@@ -1,0 +1,64 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+ARG RANGER_BASE_IMAGE=apache/ranger-base
+ARG RANGER_BASE_VERSION=20260806-2-8
+
+FROM ${RANGER_BASE_IMAGE}:${RANGER_BASE_VERSION} AS ranger-pdp
+
+ARG RANGER_VERSION
+
+# picked up by download-ranger.sh to fetch ranger-${RANGER_VERSION}-pdp.tar.gz
+ENV RANGER_SERVICE=pdp
+
+ENV RANGER_PDP_HOME=${RANGER_HOME}/pdp
+ENV RANGER_PDP_PORT=6500
+ENV RANGER_PDP_LOG_DIR=/var/log/ranger/pdp
+ENV RANGER_PDP_POLICY_CACHE_DIR=/var/ranger/cache/pdp
+
+# python3-yaml backs render-pdp-site.py; it is a system package, so the script runs on /usr/bin/python3
+RUN    apt-get update -q \
+    && DEBIAN_FRONTEND="noninteractive" apt-get install -y -q --no-install-recommends python3-yaml \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY ./scripts/download-ranger.sh                  ${RANGER_SCRIPTS}/
+COPY ./scripts/pdp/ranger-pdp.sh                   ${RANGER_SCRIPTS}/
+COPY ./scripts/pdp/render-pdp-site.py              ${RANGER_SCRIPTS}/
+COPY ./scripts/pdp/ranger-pdp-site-defaults.yaml   ${RANGER_SCRIPTS}/
+
+# Download, GPG-verify and unpack the released ranger-pdp.tar.gz in a single layer
+WORKDIR /home/ranger
+RUN    chmod +x ${RANGER_SCRIPTS}/download-ranger.sh \
+    && ${RANGER_SCRIPTS}/download-ranger.sh \
+    && tar xfz ${RANGER_DIST}/ranger-${RANGER_VERSION}-pdp.tar.gz --directory=${RANGER_HOME} \
+    && ln -s ${RANGER_HOME}/ranger-${RANGER_VERSION}-pdp ${RANGER_PDP_HOME} \
+    && rm -rf ${RANGER_DIST}/* \
+    && mkdir -p ${RANGER_PDP_LOG_DIR} ${RANGER_PDP_POLICY_CACHE_DIR} /var/run/ranger \
+    && ln -s ${RANGER_PDP_HOME}/ranger-pdp-services.sh /usr/bin/ranger-pdp-services.sh \
+    && chown -R ranger:ranger ${RANGER_HOME}/ranger-${RANGER_VERSION}-pdp ${RANGER_SCRIPTS}/ \
+                              /var/log/ranger /var/ranger /var/run/ranger \
+    && chmod 755 ${RANGER_SCRIPTS}/ranger-pdp.sh ${RANGER_SCRIPTS}/render-pdp-site.py
+WORKDIR /
+
+EXPOSE 6500
+
+HEALTHCHECK --interval=20s --timeout=10s --start-period=30s --retries=20 \
+    CMD /bin/bash -c 'scheme=http; [ "${RANGER_PDP_SSL_ENABLED:-false}" = "true" ] && scheme=https; curl -fsSk "${scheme}://localhost:${RANGER_PDP_PORT}/health/ready" >/dev/null'
+
+USER ranger
+
+ENTRYPOINT [ "/home/ranger/scripts/ranger-pdp.sh" ]

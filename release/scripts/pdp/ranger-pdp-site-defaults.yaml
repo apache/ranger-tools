@@ -1,0 +1,76 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Default ranger-pdp-site.xml properties for the apache/ranger-pdp image.
+#
+# Keys are ranger-pdp-site.xml property names. Values may reference environment variables
+# as ${VAR} or ${VAR:-default}; they are expanded after the YAML is parsed, so env values are
+# never re-interpreted as YAML. Properties whose value ends up empty are omitted, letting the
+# PDP fall back to its built-in default. Lists are joined with commas.
+#
+# To drive the configuration yourself, point RANGER_PDP_SITE_YAML at your own file in this format;
+# it replaces this file entirely.
+
+# server
+ranger.pdp.port: "${RANGER_PDP_PORT:-6500}"
+ranger.pdp.log.dir: "${RANGER_PDP_LOG_DIR:-/var/log/ranger/pdp}"
+ranger.pdp.http2.enabled: "${RANGER_PDP_HTTP2_ENABLED:-true}"
+
+# inbound authentication; header authn is always enabled by this image.
+# when neither username nor spiffe header is given, the username header defaults to X-Forwarded-User
+ranger.pdp.authn.types: "${RANGER_PDP_AUTHN_TYPES:-header}"
+ranger.pdp.authn.header.enabled: true
+ranger.pdp.authn.header.username: "${RANGER_PDP_AUTHN_HEADER_USERNAME:-}"
+ranger.pdp.authn.header.spiffe: "${RANGER_PDP_AUTHN_HEADER_SPIFFE:-}"
+
+ranger.pdp.authn.jwt.enabled: "${RANGER_PDP_AUTHN_JWT_ENABLED:-false}"
+ranger.pdp.authn.jwt.provider.url: "${RANGER_PDP_AUTHN_JWT_PROVIDER_URL:-}"
+ranger.pdp.authn.jwt.public.key: "${RANGER_PDP_AUTHN_JWT_PUBLIC_KEY:-}"
+ranger.pdp.authn.jwt.audiences: "${RANGER_PDP_AUTHN_JWT_AUDIENCES:-}"
+
+ranger.pdp.authn.kerberos.enabled: "${RANGER_PDP_AUTHN_KERBEROS_ENABLED:-false}"
+ranger.pdp.authn.kerberos.spnego.principal: "${RANGER_PDP_AUTHN_KERBEROS_SPNEGO_PRINCIPAL:-}"
+ranger.pdp.authn.kerberos.spnego.keytab: "${RANGER_PDP_AUTHN_KERBEROS_SPNEGO_KEYTAB:-}"
+ranger.pdp.authn.kerberos.name.rules: "${RANGER_PDP_AUTHN_KERBEROS_NAME_RULES:-DEFAULT}"
+
+# TLS for the PDP listener
+ranger.pdp.ssl.enabled: "${RANGER_PDP_SSL_ENABLED:-false}"
+ranger.pdp.ssl.keystore.file: "${RANGER_PDP_SSL_KEYSTORE_FILE:-}"
+ranger.pdp.ssl.keystore.password: "${RANGER_PDP_SSL_KEYSTORE_PASSWORD:-}"
+ranger.pdp.ssl.keystore.type: "${RANGER_PDP_SSL_KEYSTORE_TYPE:-JKS}"
+ranger.pdp.ssl.truststore.enabled: "${RANGER_PDP_SSL_TRUSTSTORE_ENABLED:-false}"
+ranger.pdp.ssl.truststore.file: "${RANGER_PDP_SSL_TRUSTSTORE_FILE:-}"
+ranger.pdp.ssl.truststore.password: "${RANGER_PDP_SSL_TRUSTSTORE_PASSWORD:-}"
+ranger.pdp.ssl.truststore.type: "${RANGER_PDP_SSL_TRUSTSTORE_TYPE:-JKS}"
+
+# users allowed to request decisions on behalf of other users, in all services
+"ranger.pdp.service.*.delegation.users": "${RANGER_PDP_DELEGATION_USERS:-}"
+
+# connection to Ranger Admin
+ranger.authz.app.type: ranger-pdp
+ranger.authz.init.services: "${RANGER_PDP_INIT_SERVICES:-}"
+ranger.authz.default.policy.rest.url: "${RANGER_ADMIN_URL:-http://ranger-admin.rangernw:6080}"
+ranger.authz.default.policy.rest.client.username: "${RANGER_ADMIN_USER:-admin}"
+ranger.authz.default.policy.rest.client.password: "${RANGER_ADMIN_PASSWORD:-}"
+ranger.authz.default.policy.pollIntervalMs: "${RANGER_PDP_POLICY_POLL_INTERVAL_MS:-30000}"
+ranger.authz.default.policy.cache.dir: "${RANGER_PDP_POLICY_CACHE_DIR:-/var/ranger/cache/pdp}"
+
+# audit
+ranger.authz.audit.is.enabled: "${RANGER_PDP_AUDIT_ENABLED:-true}"
+ranger.authz.audit.destination.auditserver: "${RANGER_PDP_AUDIT_SERVER_ENABLED:-false}"
+ranger.authz.audit.destination.auditserver.url: "${RANGER_PDP_AUDIT_SERVER_URL:-}"
+ranger.authz.audit.destination.solr: "${RANGER_PDP_AUDIT_SOLR_ENABLED:-false}"
+ranger.authz.audit.destination.solr.urls: "${RANGER_PDP_AUDIT_SOLR_URLS:-}"
